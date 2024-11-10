@@ -16,7 +16,7 @@ from docx import Document
 from pptx import Presentation
 from pptx.util import Inches
 import pdfplumber
-# from openpyxl import Workbook
+from openpyxl import Workbook
 from PIL import Image
 
 # not in use
@@ -40,8 +40,8 @@ from PIL import Image
 import fitz
 from io import BytesIO  # Import BytesIO for in-memory byte streams
 
-# from fpdf import FPDF
-# from docx import Document as DocxDocument
+from fpdf import FPDF
+from docx import Document as DocxDocument
 
 @api_view(['POST'])
 def convert_pdf_to_docx(request):
@@ -185,71 +185,71 @@ def convert_pdf_to_ppt_file(request):
         if os.path.exists(pptx_path):
             os.remove(pptx_path)
 
-# @api_view(['POST'])
-# def convert_pdf_to_excel_file(request):
+@api_view(['POST'])
+def convert_pdf_to_excel_file(request):
 
-#     if 'file' not in request.FILES:
-#         return Response({'error': 'No file uploaded'}, status=status.HTTP_400_BAD_REQUEST)
+    if 'file' not in request.FILES:
+        return Response({'error': 'No file uploaded'}, status=status.HTTP_400_BAD_REQUEST)
 
-#     pdf_file = request.FILES['file']
-#     if not pdf_file.name.endswith('.pdf'):
-#         return Response({'error': 'Invalid file format'}, status=status.HTTP_400_BAD_REQUEST)
+    pdf_file = request.FILES['file']
+    if not pdf_file.name.endswith('.pdf'):
+        return Response({'error': 'Invalid file format'}, status=status.HTTP_400_BAD_REQUEST)
 
-#     try:
-#        # Save the uploaded PDF file temporarily
-#         pdf_path = default_storage.save(pdf_file.name, pdf_file)
-#         full_pdf_path = os.path.join(default_storage.location, pdf_path)
+    try:
+       # Save the uploaded PDF file temporarily
+        pdf_path = default_storage.save(pdf_file.name, pdf_file)
+        full_pdf_path = os.path.join(default_storage.location, pdf_path)
 
-#         # Define the output Excel (.xlsx) file path
-#         excel_filename = pdf_file.name.replace('.pdf', '.xlsx')
-#         excel_path = os.path.join(default_storage.location, excel_filename)
+        # Define the output Excel (.xlsx) file path
+        excel_filename = pdf_file.name.replace('.pdf', '.xlsx')
+        excel_path = os.path.join(default_storage.location, excel_filename)
 
-#         # Create an Excel workbook
-#         workbook = Workbook()
-#         sheet = workbook.active
-#         sheet.title = "PDF Data"
+        # Create an Excel workbook
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "PDF Data"
 
-#         try:
-#             # Open the PDF using pdfplumber
-#             with pdfplumber.open(full_pdf_path) as pdf:
-#                 for page_number, page in enumerate(pdf.pages):
-#                     # Extract tables from the page
-#                     tables = page.extract_tables()
+        try:
+            # Open the PDF using pdfplumber
+            with pdfplumber.open(full_pdf_path) as pdf:
+                for page_number, page in enumerate(pdf.pages):
+                    # Extract tables from the page
+                    tables = page.extract_tables()
 
-#                     # If tables are found, write them to the Excel sheet
-#                     if tables:
-#                         for table in tables:
-#                             sheet.append([])  # Add an empty row to separate tables
-#                             for row in table:
-#                                 sheet.append(row)
-#                     else:
-#                         # If no tables, extract the text and put it in the Excel file
-#                         text = page.extract_text()
-#                         if text:
-#                             sheet.append([f"Page {page_number + 1}"])
-#                             for line in text.split("\n"):
-#                                 sheet.append([line])
+                    # If tables are found, write them to the Excel sheet
+                    if tables:
+                        for table in tables:
+                            sheet.append([])  # Add an empty row to separate tables
+                            for row in table:
+                                sheet.append(row)
+                    else:
+                        # If no tables, extract the text and put it in the Excel file
+                        text = page.extract_text()
+                        if text:
+                            sheet.append([f"Page {page_number + 1}"])
+                            for line in text.split("\n"):
+                                sheet.append([line])
 
-#             # Save the Excel workbook
-#             workbook.save(excel_path)
+            # Save the Excel workbook
+            workbook.save(excel_path)
 
-#             # Send the Excel file back as a download response
-#             with open(excel_path, 'rb') as excel_file:
-#                 response = HttpResponse(excel_file, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-#                 response['Content-Disposition'] = f'attachment; filename="{excel_filename}"'
-#                 return response
+            # Send the Excel file back as a download response
+            with open(excel_path, 'rb') as excel_file:
+                response = HttpResponse(excel_file, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                response['Content-Disposition'] = f'attachment; filename="{excel_filename}"'
+                return response
 
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=500)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
-#         finally:
-#             if os.path.exists(full_pdf_path):
-#                 os.remove(full_pdf_path)
-#             if os.path.exists(excel_path):
-#                 os.remove(excel_path)
+        finally:
+            if os.path.exists(full_pdf_path):
+                os.remove(full_pdf_path)
+            if os.path.exists(excel_path):
+                os.remove(excel_path)
 
-#     except Exception as e:
-#         return JsonResponse({"error": str(e)}, status=500)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @api_view(['POST'])
@@ -739,58 +739,58 @@ def enhance_pdf_quality(request):
             os.remove(compressed_pdf_path)
 
 
-# @api_view(['POST'])
-# def convert_docx_to_pdf(request):
-#     if 'file' not in request.FILES:
-#         return Response({'error': 'No file uploaded'}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def convert_docx_to_pdf(request):
+    if 'file' not in request.FILES:
+        return Response({'error': 'No file uploaded'}, status=status.HTTP_400_BAD_REQUEST)
 
-#     uploaded_file = request.FILES['file']
-#     file_name, file_extension = os.path.splitext(uploaded_file.name)
+    uploaded_file = request.FILES['file']
+    file_name, file_extension = os.path.splitext(uploaded_file.name)
 
-#     # Check for .docx file type
-#     if file_extension.lower() != '.docx':
-#         return Response({'error': 'Invalid file format. Only .docx files are allowed.'}, status=status.HTTP_400_BAD_REQUEST)
+    # Check for .docx file type
+    if file_extension.lower() != '.docx':
+        return Response({'error': 'Invalid file format. Only .docx files are allowed.'}, status=status.HTTP_400_BAD_REQUEST)
 
-#     # Save the uploaded file temporarily
-#     file_path = default_storage.save(uploaded_file.name, uploaded_file)
-#     full_file_path = os.path.join(default_storage.location, file_path)
+    # Save the uploaded file temporarily
+    file_path = default_storage.save(uploaded_file.name, uploaded_file)
+    full_file_path = os.path.join(default_storage.location, file_path)
 
-#     # Define output path for the PDF
-#     pdf_filename = f"{file_name}.pdf"
-#     pdf_path = os.path.join(default_storage.location, pdf_filename)
+    # Define output path for the PDF
+    pdf_filename = f"{file_name}.pdf"
+    pdf_path = os.path.join(default_storage.location, pdf_filename)
 
-#     try:
-#         # Convert the .docx file to PDF
-#         convert_to_pdf(full_file_path, pdf_path)
+    try:
+        # Convert the .docx file to PDF
+        convert_to_pdf(full_file_path, pdf_path)
 
-#         # Send the converted PDF file as a download response
-#         with open(pdf_path, 'rb') as pdf_file:
-#             response = HttpResponse(pdf_file, content_type='application/pdf')
-#             response['Content-Disposition'] = f'attachment; filename="{pdf_filename}"'
-#             return response
+        # Send the converted PDF file as a download response
+        with open(pdf_path, 'rb') as pdf_file:
+            response = HttpResponse(pdf_file, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{pdf_filename}"'
+            return response
 
-#     except Exception as e:
-#         return JsonResponse({"error": str(e)}, status=500)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-#     finally:
-#         # Clean up the files
-#         if os.path.exists(full_file_path):
-#             os.remove(full_file_path)
-#         if os.path.exists(pdf_path):
-#             os.remove(pdf_path)
+    finally:
+        # Clean up the files
+        if os.path.exists(full_file_path):
+            os.remove(full_file_path)
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
 
 
-# def convert_to_pdf(docx_path, pdf_path):
-#     # Open the .docx file and initialize the PDF
-#     doc = DocxDocument(docx_path)
-#     pdf = FPDF()
-#     pdf.set_auto_page_break(auto=True, margin=15)
-#     pdf.add_page()
-#     pdf.set_font("Arial", size=12)
+def convert_to_pdf(docx_path, pdf_path):
+    # Open the .docx file and initialize the PDF
+    doc = DocxDocument(docx_path)
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
 
-#     # Add each paragraph from the .docx to the PDF
-#     for paragraph in doc.paragraphs:
-#         pdf.multi_cell(0, 10, paragraph.text)
+    # Add each paragraph from the .docx to the PDF
+    for paragraph in doc.paragraphs:
+        pdf.multi_cell(0, 10, paragraph.text)
 
-#     # Save the PDF
-#     pdf.output(pdf_path)
+    # Save the PDF
+    pdf.output(pdf_path)
