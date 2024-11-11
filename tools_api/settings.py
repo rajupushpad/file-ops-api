@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'apis',
     'corsheaders',
     'welcome',
-    'rest_framework'
+    'rest_framework',
+    'videoapi'
 ]
 
 MIDDLEWARE = [
