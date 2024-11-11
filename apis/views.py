@@ -43,6 +43,8 @@ from io import BytesIO  # Import BytesIO for in-memory byte streams
 from fpdf import FPDF
 from docx import Document as DocxDocument
 
+# import cairosvg
+
 @api_view(['POST'])
 def convert_pdf_to_docx(request):
     
@@ -794,3 +796,48 @@ def convert_to_pdf(docx_path, pdf_path):
 
     # Save the PDF
     pdf.output(pdf_path)
+
+# @api_view(['POST'])
+# def convert_svg_to_png(request):
+#     if request.method == 'POST':
+#         if 'file' not in request.FILES:
+#             return JsonResponse({"error": "No image file uploaded"}, status=400)
+
+#         # Get the uploaded SVG file
+#         svg_file = request.FILES['file']
+
+#         # Validate if the uploaded file is an SVG image
+#         if not svg_file.name.lower().endswith('.svg'):
+#             return JsonResponse({"error": "Uploaded file is not an SVG image"}, status=400)
+
+#         # Save the uploaded SVG file temporarily
+#         svg_path = default_storage.save(svg_file.name, svg_file)
+#         full_svg_path = os.path.join(default_storage.location, svg_path)
+
+#         # Define the output PNG file path
+#         png_filename = svg_file.name.rsplit('.', 1)[0] + '.png'
+#         png_path = os.path.join(default_storage.location, png_filename)
+
+#         try:
+#             # Convert the SVG to PNG
+#             with open(full_svg_path, 'rb') as input_file:
+#                 svg_data = input_file.read()
+#                 cairosvg.svg2png(bytestring=svg_data, write_to=png_path)
+
+#             # Send the PNG file back as a download response
+#             with open(png_path, 'rb') as png_file:
+#                 response = HttpResponse(png_file, content_type='image/png')
+#                 response['Content-Disposition'] = f'attachment; filename="{png_filename}"'
+#                 return response
+
+#         except Exception as e:
+#             return JsonResponse({"error": str(e)}, status=500)
+
+#         finally:
+#             # Clean up temporary files
+#             if os.path.exists(full_svg_path):
+#                 os.remove(full_svg_path)
+#             if os.path.exists(png_path):
+#                 os.remove(png_path)
+
+#     return JsonResponse({"error": "Invalid request method"}, status=405)
