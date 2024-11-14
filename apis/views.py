@@ -369,34 +369,41 @@ def convert_pdf_to_image(request):
         pdf_path = default_storage.save(pdf_file.name, pdf_file)
         full_pdf_path = os.path.join(default_storage.location, pdf_path)
 
+        # Initialize image_path to None
+        image_path = None
+
         try:
             # Convert PDF to image using pdf2image
             images = convert_from_path(full_pdf_path, 300)  # 300 DPI for high quality
 
             # Define the output image file path (assuming converting only the first page)
-            image_filename = pdf_file.name.replace('.pdf', '.png')  # You can also use JPG or others
-            image_path = os.path.join(default_storage.location, image_filename)
-
-            # Save the first page as an image (PNG format)
             if images:
+                image_filename = pdf_file.name.replace('.pdf', '.png')  # You can also use JPG or others
+                image_path = os.path.join(default_storage.location, image_filename)
+
+                # Save the first page as an image (PNG format)
                 images[0].save(image_path, 'PNG')
 
-            # Send the image file back as a download response
-            with open(image_path, 'rb') as image_file:
-                response = HttpResponse(image_file, content_type='image/png')
-                response['Content-Disposition'] = f'attachment; filename="{image_filename}"'
-                return response
+                # Send the image file back as a download response
+                with open(image_path, 'rb') as image_file:
+                    response = HttpResponse(image_file, content_type='image/png')
+                    response['Content-Disposition'] = f'attachment; filename="{image_filename}"'
+                    return response
+
+            else:
+                return JsonResponse({"error": "Failed to convert PDF to images"}, status=500)
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-        
+
         finally:
             if os.path.exists(full_pdf_path):
                 os.remove(full_pdf_path)
-            if os.path.exists(image_path):
+            if image_path and os.path.exists(image_path):
                 os.remove(image_path)
         
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
 
 @api_view(['POST'])
 def convert_jpg_to_png(request):
