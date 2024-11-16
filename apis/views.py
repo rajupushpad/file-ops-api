@@ -55,14 +55,16 @@ def convert_pdf_to_docx(request):
     if not pdf_file.name.endswith('.pdf'):
         return Response({'error': 'Invalid file format'}, status=status.HTTP_400_BAD_REQUEST)
 
+    full_pdf_path = None
+
     try:
         
         # Save the file temporarily
-        pdf_path = default_storage.save(pdf_file.name, pdf_file)
+        pdf_path = default_storage.save('raju', pdf_file)
         full_pdf_path = os.path.join(default_storage.location, pdf_path)
 
         # Define output DOCX path
-        docx_filename = pdf_file.name.replace('.pdf', '.docx')
+        docx_filename = "pushpad.docx"
         docx_path = os.path.join(default_storage.location, docx_filename)
 
         converter = Converter(full_pdf_path)
@@ -492,102 +494,6 @@ def convert_png_to_jpg(request):
                 os.remove(jpg_path)
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
-# @api_view(['POST'])
-# def convert_svg_to_png(request):
-#     if request.method == 'POST':
-#         if 'file' not in request.FILES:
-#             return JsonResponse({"error": "No SVG file uploaded"}, status=400)
-
-#         # Get the uploaded SVG file
-#         svg_file = request.FILES['file']
-
-#         # Validate if the uploaded file is an SVG image
-#         if not svg_file.name.lower().endswith('.svg'):
-#             return JsonResponse({"error": "Uploaded file is not an SVG image"}, status=400)
-
-#         # Save the uploaded SVG file temporarily
-#         svg_path = default_storage.save(svg_file.name, svg_file)
-#         full_svg_path = os.path.join(default_storage.location, svg_path)
-
-#         # Define the output PNG file path
-#         png_filename = svg_file.name.rsplit('.', 1)[0] + '.png'
-#         png_path = os.path.join(default_storage.location, png_filename)
-
-#         try:
-#             # Convert the SVG file to PNG using CairoSVG
-#             with open(full_svg_path, 'rb') as svg_input:
-#                 svg_content = svg_input.read()
-#                 cairosvg.svg2png(bytestring=svg_content, write_to=png_path)
-
-#             # Send the PNG file back as a download response
-#             with open(png_path, 'rb') as png_file:
-#                 response = HttpResponse(png_file, content_type='image/png')
-#                 response['Content-Disposition'] = f'attachment; filename="{png_filename}"'
-#                 return response
-
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=500)
-
-#         finally:
-#             if os.path.exists(full_svg_path):
-#                 os.remove(full_svg_path)
-#             if os.path.exists(png_path):
-#                 os.remove(png_path)
-            
-#     return JsonResponse({"error": "Invalid request method"}, status=405)
-
-# @api_view(['POST'])
-# def convert_png_to_svg(request):
-#     if request.method == 'POST':
-#         if 'file' not in request.FILES:
-#             return JsonResponse({"error": "No PNG file uploaded"}, status=400)
-
-#         # Get the uploaded PNG image file
-#         png_file = request.FILES['file']
-
-#         # Validate if the uploaded file is a PNG image
-#         if not png_file.name.lower().endswith('.png'):
-#             return JsonResponse({"error": "Uploaded file is not a PNG image"}, status=400)
-
-#         # Save the uploaded PNG image file temporarily
-#         png_path = default_storage.save(png_file.name, png_file)
-#         full_png_path = os.path.join(default_storage.location, png_path)
-
-#         # Define the output PBM and SVG file paths
-#         pbm_filename = png_file.name.rsplit('.', 1)[0] + '.pbm'
-#         pbm_path = os.path.join(default_storage.location, pbm_filename)
-#         svg_filename = png_file.name.rsplit('.', 1)[0] + '.svg'
-#         svg_path = os.path.join(default_storage.location, svg_filename)
-
-#         try:
-#             # Open the PNG image using Pillow and convert to binary (1-bit pixels, black and white)
-#             with Image.open(full_png_path) as img:
-#                 img = img.convert('1')  # Convert to 1-bit pixels (black and white)
-#                 img.save(pbm_path)  # Save as PBM (format determined by extension)
-
-#             # Use Potrace to convert PBM to SVG
-#             subprocess.run(['potrace', pbm_path, '-s', '-o', svg_path], check=True)
-
-#             # Send the SVG file back as a download response
-#             with open(svg_path, 'rb') as svg_output:
-#                 response = HttpResponse(svg_output, content_type='image/svg+xml')
-#                 response['Content-Disposition'] = f'attachment; filename="{svg_filename}"'
-#                 return response
-
-#         except subprocess.CalledProcessError as e:
-#             return JsonResponse({"error": f"Potrace error: {e}"}, status=500)
-
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=500)
-
-#         finally:
-#             if os.path.exists(full_png_path):
-#                 os.remove(full_png_path)
-#             if os.path.exists(svg_path):
-#                 os.remove(svg_path)
-
-#     return JsonResponse({"error": "Invalid request method"}, status=405)
-
 @api_view(['POST'])
 def compress_image(request):
     if request.method == 'POST':
@@ -846,5 +752,101 @@ def convert_to_pdf(docx_path, pdf_path):
 #                 os.remove(full_svg_path)
 #             if os.path.exists(png_path):
 #                 os.remove(png_path)
+
+#     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+# @api_view(['POST'])
+# def convert_svg_to_png(request):
+#     if request.method == 'POST':
+#         if 'file' not in request.FILES:
+#             return JsonResponse({"error": "No SVG file uploaded"}, status=400)
+
+#         # Get the uploaded SVG file
+#         svg_file = request.FILES['file']
+
+#         # Validate if the uploaded file is an SVG image
+#         if not svg_file.name.lower().endswith('.svg'):
+#             return JsonResponse({"error": "Uploaded file is not an SVG image"}, status=400)
+
+#         # Save the uploaded SVG file temporarily
+#         svg_path = default_storage.save(svg_file.name, svg_file)
+#         full_svg_path = os.path.join(default_storage.location, svg_path)
+
+#         # Define the output PNG file path
+#         png_filename = svg_file.name.rsplit('.', 1)[0] + '.png'
+#         png_path = os.path.join(default_storage.location, png_filename)
+
+#         try:
+#             # Convert the SVG file to PNG using CairoSVG
+#             with open(full_svg_path, 'rb') as svg_input:
+#                 svg_content = svg_input.read()
+#                 cairosvg.svg2png(bytestring=svg_content, write_to=png_path)
+
+#             # Send the PNG file back as a download response
+#             with open(png_path, 'rb') as png_file:
+#                 response = HttpResponse(png_file, content_type='image/png')
+#                 response['Content-Disposition'] = f'attachment; filename="{png_filename}"'
+#                 return response
+
+#         except Exception as e:
+#             return JsonResponse({"error": str(e)}, status=500)
+
+#         finally:
+#             if os.path.exists(full_svg_path):
+#                 os.remove(full_svg_path)
+#             if os.path.exists(png_path):
+#                 os.remove(png_path)
+            
+#     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+# @api_view(['POST'])
+# def convert_png_to_svg(request):
+#     if request.method == 'POST':
+#         if 'file' not in request.FILES:
+#             return JsonResponse({"error": "No PNG file uploaded"}, status=400)
+
+#         # Get the uploaded PNG image file
+#         png_file = request.FILES['file']
+
+#         # Validate if the uploaded file is a PNG image
+#         if not png_file.name.lower().endswith('.png'):
+#             return JsonResponse({"error": "Uploaded file is not a PNG image"}, status=400)
+
+#         # Save the uploaded PNG image file temporarily
+#         png_path = default_storage.save(png_file.name, png_file)
+#         full_png_path = os.path.join(default_storage.location, png_path)
+
+#         # Define the output PBM and SVG file paths
+#         pbm_filename = png_file.name.rsplit('.', 1)[0] + '.pbm'
+#         pbm_path = os.path.join(default_storage.location, pbm_filename)
+#         svg_filename = png_file.name.rsplit('.', 1)[0] + '.svg'
+#         svg_path = os.path.join(default_storage.location, svg_filename)
+
+#         try:
+#             # Open the PNG image using Pillow and convert to binary (1-bit pixels, black and white)
+#             with Image.open(full_png_path) as img:
+#                 img = img.convert('1')  # Convert to 1-bit pixels (black and white)
+#                 img.save(pbm_path)  # Save as PBM (format determined by extension)
+
+#             # Use Potrace to convert PBM to SVG
+#             subprocess.run(['potrace', pbm_path, '-s', '-o', svg_path], check=True)
+
+#             # Send the SVG file back as a download response
+#             with open(svg_path, 'rb') as svg_output:
+#                 response = HttpResponse(svg_output, content_type='image/svg+xml')
+#                 response['Content-Disposition'] = f'attachment; filename="{svg_filename}"'
+#                 return response
+
+#         except subprocess.CalledProcessError as e:
+#             return JsonResponse({"error": f"Potrace error: {e}"}, status=500)
+
+#         except Exception as e:
+#             return JsonResponse({"error": str(e)}, status=500)
+
+#         finally:
+#             if os.path.exists(full_png_path):
+#                 os.remove(full_png_path)
+#             if os.path.exists(svg_path):
+#                 os.remove(svg_path)
 
 #     return JsonResponse({"error": "Invalid request method"}, status=405)

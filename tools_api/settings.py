@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-amzw@=vlehbepsxn01h5%=afz+9(8-arttum3%5v%_ik#e=%gp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['jllzybjs59.execute-api.us-east-1.amazonaws.com', 'localhost','*']
+ALLOWED_HOSTS = ['filenet.in', 'filemagics.com','localhost']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -121,8 +121,8 @@ USE_I18N = True
 USE_TZ = True
 
 
-MEDIA_URL = '/tmp/'
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'tmp')
+MEDIA_URL = '/media/'
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
