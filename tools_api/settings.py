@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-amzw@=vlehbepsxn01h5%=afz+9(8-arttum3%5v%_ik#e=%gp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['filenet.in', 'filemagics.com','localhost']
+ALLOWED_HOSTS = ['filenet.in', 'filemagics.com','localhost', '43.204.37.216', '127.0.0.1']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
