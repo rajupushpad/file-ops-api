@@ -29,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['filenet.in', 'filemagics.com','localhost', '43.204.37.216', '127.0.0.1']
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Application definition

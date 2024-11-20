@@ -372,6 +372,11 @@ def download_youtube_video_url(request):
 
     youtube_url = request.data['url']
 
+    cookies = request.COOKIES
+    
+    # Print the cookies to the console (this can also be logged for debugging)
+    print("Cookies received:", cookies)
+
     # Validate URL
     YOUTUBE_URL_REGEX = r'(https?://)?(www\.)?(youtube\.com|youtu\.?be)/.+'
     if not re.match(YOUTUBE_URL_REGEX, youtube_url):
@@ -382,6 +387,7 @@ def download_youtube_video_url(request):
             'format': 'best[ext=mp4]/best',  # Get the best quality MP4 format
             'noplaylist': True,  # Ignore playlists
             'nocheckcertificate': True,  # Skip SSL certificate verification
+            'cookies': cookies
         }
 
         # Extract video information without downloading
