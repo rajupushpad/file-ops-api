@@ -398,7 +398,8 @@ def download_youtube_video_url(request):
             'format': 'best[ext=mp4]/best',  # Get the best quality MP4 format
             'noplaylist': True,  # Ignore playlists
             'nocheckcertificate': True,  # Skip SSL certificate verification
-            'cookies': cookie_dict  # Pass cookies as a dictionary directly
+            'cookies': cookie_dict,  # Pass cookies as a dictionary directly
+            'cookies-from-browser': "chrome"
         }
 
         # Extract video information without downloading
