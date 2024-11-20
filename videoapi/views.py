@@ -372,22 +372,33 @@ def download_youtube_video_url(request):
 
     youtube_url = request.data['url']
 
+    # Get cookies from request and prepare them for yt-dlp
     cookies = request.COOKIES
-    
-    # Print the cookies to the console (this can also be logged for debugging)
+
+    # Print cookies for debugging (optional)
     print("Cookies received:", cookies)
 
-    # Validate URL
+    # Validate URL format using regular expression
     YOUTUBE_URL_REGEX = r'(https?://)?(www\.)?(youtube\.com|youtu\.?be)/.+'
     if not re.match(YOUTUBE_URL_REGEX, youtube_url):
         return Response({'error': 'Invalid YouTube URL'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
+        # Convert cookies to the format yt-dlp accepts (i.e., as a dictionary or cookies file)
+        if cookies:
+            # For example, you can create a cookies file or pass cookies as a dict
+            cookie_dict = {key: value for key, value in cookies.items()}
+
+            # Optionally, you can write cookies to a temporary file and pass the file path
+            # with open('/path/to/cookies.txt', 'w') as cookie_file:
+            #     json.dump(cookie_dict, cookie_file)
+
+        # yt-dlp options
         ydl_opts = {
             'format': 'best[ext=mp4]/best',  # Get the best quality MP4 format
             'noplaylist': True,  # Ignore playlists
             'nocheckcertificate': True,  # Skip SSL certificate verification
-            'cookies': cookies
+            'cookies': cookie_dict  # Pass cookies as a dictionary directly
         }
 
         # Extract video information without downloading
