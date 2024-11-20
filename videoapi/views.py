@@ -16,6 +16,7 @@ import os
 import yt_dlp
 import random
 import re
+from yt_dlp import YoutubeDL
 
 @api_view(['POST'])
 def change_video_to_text_content(request):
@@ -356,3 +357,41 @@ def download_facebook_video(request):
         # Clean up downloaded file
         if temp_video_path and os.path.exists(temp_video_path):
             os.remove(temp_video_path)
+
+
+
+
+@api_view(['POST'])
+def download_youtube_video_url(request):
+    """
+    API to fetch the direct URL of a YouTube video.
+    Accepts a POST request with the YouTube video URL in the request body.
+    """
+    if 'url' not in request.data:
+        return Response({'error': 'No URL provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    youtube_url = request.data['url']
+
+    # Validate URL
+    YOUTUBE_URL_REGEX = r'(https?://)?(www\.)?(youtube\.com|youtu\.?be)/.+'
+    if not re.match(YOUTUBE_URL_REGEX, youtube_url):
+        return Response({'error': 'Invalid YouTube URL'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        ydl_opts = {
+            'format': 'best[ext=mp4]/best',  # Get the best quality MP4 format
+            'noplaylist': True,  # Ignore playlists
+            'nocheckcertificate': True,  # Skip SSL certificate verification
+        }
+
+        # Extract video information without downloading
+        with YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(youtube_url, download=False)
+            video_direct_url = info['url']  # Direct URL for playback/download
+
+        # Return the video URL in the response
+        return Response({'video_url': video_direct_url}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        # Log the exception for debugging and return an error response
+        return Response({'error': f'An error occurred: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
