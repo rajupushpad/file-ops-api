@@ -399,7 +399,8 @@ def download_youtube_video_url(request):
             'noplaylist': True,  # Ignore playlists
             'nocheckcertificate': True,  # Skip SSL certificate verification
             'cookies': cookie_dict,  # Pass cookies as a dictionary directly
-            'cookies-from-browser': "chrome"
+            'u': 'rajkumar109w@gmail.com',
+            'p': 'JAISHREERAM@123'
         }
 
         # Extract video information without downloading
