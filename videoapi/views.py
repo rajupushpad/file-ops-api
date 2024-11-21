@@ -143,38 +143,44 @@ def extract_audio_from_video(request):
         if output_audio_path and os.path.exists(output_audio_path):
             os.remove(output_audio_path)
 
+COOKIES_FILE_PATH = "cookies.txt"
+
 @api_view(['POST'])
 def download_youtube_video_url(request):
-    if request.method == "POST":
-        try:
-            # Parse the request body
-            body = json.loads(request.body)
-            video_url = body.get("url")
+        if request.method == "POST":
+            try:
+                # Parse the request body
+                body = json.loads(request.body)
+                video_url = body.get("url")
 
-            if not video_url:
-                return JsonResponse({"error": "Missing required fields"}, status=400)
+                if not video_url:
+                    return JsonResponse({"error": "Missing video_url"}, status=400)
 
-            # yt-dlp options
-            ydl_opts = {
-                "format": "best",
-                "username": "rajkumar109w@gmail.com",
-                "password": "JAISHREERAM@123",
-            }
+                # Ensure the cookies file exists
+                if not os.path.exists(COOKIES_FILE_PATH):
+                    return JsonResponse({"error": "Cookies file not found"}, status=500)
 
-            # Extract the video URL
-            with YoutubeDL(ydl_opts) as ydl:
-                info_dict = ydl.extract_info(video_url, download=False)
-                absolute_url = info_dict.get("url")
+                # yt-dlp options
+                ydl_opts = {
+                    "format": "best",
+                    "cookiefile": COOKIES_FILE_PATH,  # Use centralized cookies file
+                }
 
-            if not absolute_url:
-                return JsonResponse({"error": "Failed to retrieve video URL"}, status=500)
+                # Extract the video URL
+                with YoutubeDL(ydl_opts) as ydl:
+                    info_dict = ydl.extract_info(video_url, download=False)
+                    absolute_url = info_dict.get("url")
 
-            return JsonResponse({"absolute_url": absolute_url}, status=200)
+                if not absolute_url:
+                    return JsonResponse({"error": "Failed to retrieve video URL"}, status=500)
 
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+                return JsonResponse({"absolute_url": absolute_url}, status=200)
 
-    return JsonResponse({"error": "Invalid request method"}, status=405)
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=500)
+
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
 
     # """
     # API to fetch the direct URL of a YouTube video.
