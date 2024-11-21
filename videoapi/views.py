@@ -170,11 +170,18 @@ def download_youtube_video_url(request):
                 with YoutubeDL(ydl_opts) as ydl:
                     info_dict = ydl.extract_info(video_url, download=False)
                     absolute_url = info_dict.get("url")
+                    video_title = info_dict.get("title")
+                    thumbnail_url = info_dict.get("thumbnail")
+
 
                 if not absolute_url:
                     return JsonResponse({"error": "Failed to retrieve video URL"}, status=500)
 
-                return JsonResponse({"absolute_url": absolute_url}, status=200)
+                return JsonResponse({
+                    "absolute_url": absolute_url,
+                    "title": video_title,
+                    "thumbnail": thumbnail_url
+                }, status=200)
 
             except Exception as e:
                 return JsonResponse({"error": str(e)}, status=500)
@@ -182,54 +189,93 @@ def download_youtube_video_url(request):
         return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
-    # """
-    # API to fetch the direct URL of a YouTube video.
-    # Accepts a POST request with the YouTube video URL in the request body.
-    # """
-    # if 'url' not in request.data:
-    #     return Response({'error': 'No URL provided'}, status=status.HTTP_400_BAD_REQUEST)
+INSTAGRAM_COOKIES_FILE_PATH = "instagram-cookies.txt"
 
-    # youtube_url = request.data['url']
+@api_view(['POST'])
+def download_instagram_video_url(request):
+    if request.method == "POST":
+        try:
+            # Parse the request body
+            body = json.loads(request.body)
+            video_url = body.get("url")
 
-    # # Get cookies from request and prepare them for yt-dlp
-    # cookies = request.COOKIES
+            if not video_url:
+                return JsonResponse({"error": "Missing video_url"}, status=400)
 
-    # # Print cookies for debugging (optional)
-    # print("Cookies received:", cookies)
+            # Ensure the cookies file exists
+            if not os.path.exists(INSTAGRAM_COOKIES_FILE_PATH):
+                return JsonResponse({"error": "Cookies file not found"}, status=500)
 
-    # # Validate URL format using regular expression
-    # YOUTUBE_URL_REGEX = r'(https?://)?(www\.)?(youtube\.com|youtu\.?be)/.+'
-    # if not re.match(YOUTUBE_URL_REGEX, youtube_url):
-    #     return Response({'error': 'Invalid YouTube URL'}, status=status.HTTP_400_BAD_REQUEST)
+            # yt-dlp options
+            ydl_opts = {
+                "format": "best",
+                "cookiefile": INSTAGRAM_COOKIES_FILE_PATH,  # Use centralized cookies file
+            }
 
-    # try:
-    #     # Convert cookies to the format yt-dlp accepts (i.e., as a dictionary or cookies file)
-    #     if cookies:
-    #         # For example, you can create a cookies file or pass cookies as a dict
-    #         cookie_dict = {key: value for key, value in cookies.items()}
+            # Extract the video URL
+            with YoutubeDL(ydl_opts) as ydl:
+                info_dict = ydl.extract_info(video_url, download=False)
+                absolute_url = info_dict.get("url")
+                video_title = info_dict.get("title")
+                thumbnail_url = info_dict.get("thumbnail")
 
-    #         # Optionally, you can write cookies to a temporary file and pass the file path
-    #         # with open('/path/to/cookies.txt', 'w') as cookie_file:
-    #         #     json.dump(cookie_dict, cookie_file)
 
-    #     # yt-dlp options
-    #     ydl_opts = {
-    #         'format': 'best[ext=mp4]/best',  # Get the best quality MP4 format
-    #         'noplaylist': True,  # Ignore playlists
-    #         'nocheckcertificate': True,  # Skip SSL certificate verification
-    #         'cookies': cookie_dict,  # Pass cookies as a dictionary directly
-    #         'u': 'rajkumar109w@gmail.com',
-    #         'p': 'JAISHREERAM@123'
-    #     }
+            if not absolute_url:
+                return JsonResponse({"error": "Failed to retrieve video URL"}, status=500)
 
-    #     # Extract video information without downloading
-    #     with YoutubeDL(ydl_opts) as ydl:
-    #         info = ydl.extract_info(youtube_url, download=False)
-    #         video_direct_url = info['url']  # Direct URL for playback/download
+            return JsonResponse({
+                "absolute_url": absolute_url,
+                "title": video_title,
+                "thumbnail": thumbnail_url
+            }, status=200)
 
-    #     # Return the video URL in the response
-    #     return Response({'video_url': video_direct_url}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
-    # except Exception as e:
-    #     # Log the exception for debugging and return an error response
-    #     return Response({'error': f'An error occurred: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+
+FACEBOOK_COOKIES_FILE_PATH = "facebook-cookies.txt"
+
+@api_view(['POST'])
+def download_facebook_video_url(request):
+    if request.method == "POST":
+        try:
+            # Parse the request body
+            body = json.loads(request.body)
+            video_url = body.get("url")
+
+            if not video_url:
+                return JsonResponse({"error": "Missing video_url"}, status=400)
+
+            # Ensure the cookies file exists
+            if not os.path.exists(FACEBOOK_COOKIES_FILE_PATH):
+                return JsonResponse({"error": "Cookies file not found"}, status=500)
+
+            # yt-dlp options for Facebook
+            ydl_opts = {
+                "format": "best",
+                "cookiefile": FACEBOOK_COOKIES_FILE_PATH,  # Use centralized cookies file
+            }
+
+            # Extract the video URL
+            with YoutubeDL(ydl_opts) as ydl:
+                info_dict = ydl.extract_info(video_url, download=False)
+                absolute_url = info_dict.get("url")
+                video_title = info_dict.get("title")
+                thumbnail_url = info_dict.get("thumbnail")
+
+            if not absolute_url:
+                return JsonResponse({"error": "Failed to retrieve video URL"}, status=500)
+
+            return JsonResponse({
+                "absolute_url": absolute_url,
+                "title": video_title,
+                "thumbnail": thumbnail_url
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
