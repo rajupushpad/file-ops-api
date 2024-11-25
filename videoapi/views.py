@@ -300,7 +300,7 @@ def download_youtube_video_url(request):
                 # yt-dlp options
                 ydl_opts = {
                     "format": "best",
-                    # "cookiefile": COOKIES_FILE_PATH,  # Use centralized cookies file
+                    "cookiefile": COOKIES_FILE_PATH,  # Use centralized cookies file
                     'oauth2_client_secrets': CLIENT_SECRETS_FILE,
                 }
 
