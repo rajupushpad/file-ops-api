@@ -145,48 +145,48 @@ def extract_audio_from_video(request):
 
 COOKIES_FILE_PATH = "cookies.txt"
 
-# @api_view(['POST'])
-# def download_youtube_video_url(request):
-#         if request.method == "POST":
-#             try:
-#                 # Parse the request body
-#                 body = json.loads(request.body)
-#                 video_url = body.get("url")
+@api_view(['POST'])
+def download_youtube_video_url(request):
+        if request.method == "POST":
+            try:
+                # Parse the request body
+                body = json.loads(request.body)
+                video_url = body.get("url")
 
-#                 if not video_url:
-#                     return JsonResponse({"error": "Missing video_url"}, status=400)
+                if not video_url:
+                    return JsonResponse({"error": "Missing video_url"}, status=400)
 
-#                 # Ensure the cookies file exists
-#                 if not os.path.exists(COOKIES_FILE_PATH):
-#                     return JsonResponse({"error": "Cookies file not found"}, status=500)
+                # Ensure the cookies file exists
+                if not os.path.exists(COOKIES_FILE_PATH):
+                    return JsonResponse({"error": "Cookies file not found"}, status=500)
 
-#                 # yt-dlp options
-#                 ydl_opts = {
-#                     "format": "best",
-#                     "cookiefile": COOKIES_FILE_PATH,  # Use centralized cookies file
-#                 }
+                # yt-dlp options
+                ydl_opts = {
+                    "format": "best",
+                    "cookiefile": COOKIES_FILE_PATH,  # Use centralized cookies file
+                }
 
-#                 # Extract the video URL
-#                 with YoutubeDL(ydl_opts) as ydl:
-#                     info_dict = ydl.extract_info(video_url, download=False)
-#                     absolute_url = info_dict.get("url")
-#                     video_title = info_dict.get("title")
-#                     thumbnail_url = info_dict.get("thumbnail")
+                # Extract the video URL
+                with YoutubeDL(ydl_opts) as ydl:
+                    info_dict = ydl.extract_info(video_url, download=False)
+                    absolute_url = info_dict.get("url")
+                    video_title = info_dict.get("title")
+                    thumbnail_url = info_dict.get("thumbnail")
 
 
-#                 if not absolute_url:
-#                     return JsonResponse({"error": "Failed to retrieve video URL"}, status=500)
+                if not absolute_url:
+                    return JsonResponse({"error": "Failed to retrieve video URL"}, status=500)
 
-#                 return JsonResponse({
-#                     "absolute_url": absolute_url,
-#                     "title": video_title,
-#                     "thumbnail": thumbnail_url
-#                 }, status=200)
+                return JsonResponse({
+                    "absolute_url": absolute_url,
+                    "title": video_title,
+                    "thumbnail": thumbnail_url
+                }, status=200)
 
-#             except Exception as e:
-#                 return JsonResponse({"error": str(e)}, status=500)
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=500)
 
-#         return JsonResponse({"error": "Invalid request method"}, status=405)
+        return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
 INSTAGRAM_COOKIES_FILE_PATH = "instagram-cookies.txt"
@@ -281,47 +281,47 @@ def download_facebook_video_url(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
-CLIENT_SECRETS_FILE = "client_secrets.json"
-@api_view(['POST'])
-def download_youtube_video_url(request):
-        if request.method == "POST":
-            try:
-                # Parse the request body
-                body = json.loads(request.body)
-                video_url = body.get("url")
+# CLIENT_SECRETS_FILE = "client_secrets.json"
+# @api_view(['POST'])
+# def download_youtube_video_url(request):
+#         if request.method == "POST":
+#             try:
+#                 # Parse the request body
+#                 body = json.loads(request.body)
+#                 video_url = body.get("url")
 
-                if not video_url:
-                    return JsonResponse({"error": "Missing video_url"}, status=400)
+#                 if not video_url:
+#                     return JsonResponse({"error": "Missing video_url"}, status=400)
 
-                # Ensure the cookies file exists
-                if not os.path.exists(COOKIES_FILE_PATH):
-                    return JsonResponse({"error": "Cookies file not found"}, status=500)
+#                 # Ensure the cookies file exists
+#                 if not os.path.exists(COOKIES_FILE_PATH):
+#                     return JsonResponse({"error": "Cookies file not found"}, status=500)
 
-                # yt-dlp options
-                ydl_opts = {
-                    "format": "best",
-                    "cookiefile": COOKIES_FILE_PATH,  # Use centralized cookies file
-                    'oauth2_client_secrets': CLIENT_SECRETS_FILE,
-                }
+#                 # yt-dlp options
+#                 ydl_opts = {
+#                     "format": "best",
+#                     "cookiefile": COOKIES_FILE_PATH,  # Use centralized cookies file
+#                     'oauth2_client_secrets': CLIENT_SECRETS_FILE,
+#                 }
 
-                # Extract the video URL
-                with YoutubeDL(ydl_opts) as ydl:
-                    info_dict = ydl.extract_info(video_url, download=False)
-                    absolute_url = info_dict.get("url")
-                    video_title = info_dict.get("title")
-                    thumbnail_url = info_dict.get("thumbnail")
+#                 # Extract the video URL
+#                 with YoutubeDL(ydl_opts) as ydl:
+#                     info_dict = ydl.extract_info(video_url, download=False)
+#                     absolute_url = info_dict.get("url")
+#                     video_title = info_dict.get("title")
+#                     thumbnail_url = info_dict.get("thumbnail")
 
 
-                if not absolute_url:
-                    return JsonResponse({"error": "Failed to retrieve video URL"}, status=500)
+#                 if not absolute_url:
+#                     return JsonResponse({"error": "Failed to retrieve video URL"}, status=500)
 
-                return JsonResponse({
-                    "absolute_url": absolute_url,
-                    "title": video_title,
-                    "thumbnail": thumbnail_url
-                }, status=200)
+#                 return JsonResponse({
+#                     "absolute_url": absolute_url,
+#                     "title": video_title,
+#                     "thumbnail": thumbnail_url
+#                 }, status=200)
 
-            except Exception as e:
-                return JsonResponse({"error": str(e)}, status=500)
+#             except Exception as e:
+#                 return JsonResponse({"error": str(e)}, status=500)
 
-        return JsonResponse({"error": "Invalid request method"}, status=405)
+#         return JsonResponse({"error": "Invalid request method"}, status=405)
